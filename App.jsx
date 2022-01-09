@@ -1,111 +1,69 @@
+
 import React from "react";
-import  {Row , Col , Button , ListGroupItem , ListGroup} from 'reactstrap';
-import Sidebar from "./Sidebar/sidebar";
-import polls from "./data/polls";
-import MainContent from './MainContent/MainContent'
-import shortid from "shortid";
-class App extends  React.Component{
+import {Row , Col, ListGroupItem} from 'reactstrap';
+import Item from "./MakeItem/Item";
+import TableView from "./TableView/TableView";
+import ListView from "./ListView/ListView";
+import shortid from 'shortid'
+class App extends React.Component{
 
-  state = {
-    polls:[],
-    selectedPoll:{},
-    searchTerm: '',
-    users:[]
-  }
-
-
-  componentDidMount(){
-    this.setState({
-      polls:polls
-    })
-  }
-
-  ok = (user) => {
-    user.id = shortid.generate()
-    this.setState({
-      users:[...this.state.users , user]
-    })
-  }
-
-  addnewPoll = (poll) => {
-    poll.id = shortid.generate()
-    poll.created = new Date()
-    poll.vote = 0
-    poll.opinion = []
-
-    this.setState({polls:this.state.polls.concat(poll)})
-  }
-
-   delectPoll = pollId => {
-    const polls = this.state.polls.filter(p =>p.id!== pollId)
-     this.setState({polls, selectedPoll:{} })
-   }
-
-   selectPoll = pollId => {
-     const poll = this.state.polls.find(p => p.id === pollId)
-     this.setState({selectedPoll : poll})
-   };
-
-   getOpinion = (response) => {
+    state = {
+        todos:[{
+            id:'543545545',
+            title:'Create Your Title',
+            description:'Welcome to Tahsin  MAhi Application',
+            Searchterm:' ',
+        
+        },
+        {
+            id:'45w5w54556',
+            title:'Your Item Will look this',
+            description:'Welcome to Tahsin  MAhi Application',
+            Searchterm:' ',
+          
+        },
+    ],
+    isSelect:false
     
+}
 
-   };
+    toggleSelect = (todoId) => {
+    this.setState({
+     isSelect:!this.state.isSelect
+        });       
+      console.log(this.state.isSelect)
+    }
 
-   handleSerch = (searchTerm) => {
-     this.setState({
-      searchTerm
-     });
-   };
+    createTodo = (todo) => {
+       todo.id = shortid.generate()
+       todo.time = new Date()
+       todo.isSelect = false;
 
-   updatePoll = (updatePoll) => {
-      const {polls} = this.state
-     const poll = polls.find(p => p.id === updatePoll.id)
-    
-     poll.title = updatePoll.title
-     poll.description = updatePoll.description
-     poll.option = updatePoll.option
+       const todos = [todo,...this.state.todos]
 
-     this.setState({polls})
-   }
-
-   PerformSearch = () => {
-    return (
-         this.state.polls.filter(poll => 
-          poll.title
-          .toLowerCase()
-          .includes(this.state.searchTerm.toLowerCase())
-        )
-    )
-  }
+       this.setState({todos})
+    }
 
     render(){
-      const polls = this.PerformSearch()
-       return(
-          <Row>
-              <Col md={3}>
-           <Sidebar addnewPoll={this.addnewPoll} polls={polls} selectPoll = {this.selectPoll} handleSerch={this.handleSerch}/>
-              </Col>
-              <Col md={8} className="mt-5 ms-4">
-          <MainContent hello = {this.ok} poll={this.state.selectedPoll} delectPoll = {this.delectPoll} updatePoll = {this.updatePoll} getOpinion = {this.getOpinion}/>
-          </Col>
-          <Col md={6} className="ms-3">
-              <ListGroup>
-                <h5>About submit detais</h5>
-                {this.state.users.map(user => (
-                  <ListGroupItem key={user.id}>
-                     <ul className="my-2 ms-5 " >
-                       <li>
-                          {'Thanks for using our Application' + ' ' + user.name + ' ---> ' + user.selectItem + ' ' + new Date().getHours()}
-                       </li>
-                     </ul>
-                  </ListGroupItem>
-                ))}
-              </ListGroup>
-          </Col>
-         
-          </Row>
+        return(
+            <div>
+                <Row>
+                    <Col md={12}>
+                     <h3 style={{color:'#ef8f18' , textAlign: 'center' , fontSize:'50px' , marginTop:'60px'}}>Todo Application</h3>
+                    </Col>
+                    <Col className="my-5">
+                    <Item createTodo={this.createTodo}/>
+                    </Col>
+                    <Col md={12}> 
+                     <TableView isSelect={this.state.isSelect} todos={this.state.todos} toggleSelect={this.toggleSelect}/>
+                    </Col>
+                    <Col className="mt-5">
+                      <ListView isSelect={this.state.isSelect} todos={this.state.todos} toggleSelect={this.toggleSelect}/>
+                    </Col>
+                </Row>
+            </div>
         )
     }
-};
-
+}
+//Next Part we Will fix the problem
 export default App;
